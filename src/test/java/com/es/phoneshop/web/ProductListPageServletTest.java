@@ -41,7 +41,10 @@ public class ProductListPageServletTest {
     public void testDoGet() throws ServletException, IOException {
         servlet.doGet(request, response);
 
-        verify(requestDispatcher).forward(request, response);
+        verify(request).getParameter("query");
+        verify(request).getParameter("sort");
+        verify(request).getParameter("order");
         verify(request).setAttribute(eq("products"), anyList());
+        verify(requestDispatcher).forward(request, response);
     }
 }

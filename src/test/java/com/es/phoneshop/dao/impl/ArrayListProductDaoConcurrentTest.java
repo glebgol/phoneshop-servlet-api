@@ -1,8 +1,8 @@
 package com.es.phoneshop.dao.impl;
 
-import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.model.Product;
 import com.es.phoneshop.values.Products;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,17 +10,24 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static com.es.phoneshop.values.Products.sampleData;
 import static org.junit.Assert.assertEquals;
 
 public class ArrayListProductDaoConcurrentTest {
     private ExecutorService executorService;
-    private ProductDao productDao;
-    private final int initialProductCount = 12;
+    private ArrayListProductDao productDao;
+    private final int initialProductCount = 6;
 
     @Before
-    public void setup() {
+    public void setUp() {
+        productDao = ArrayListProductDao.getInstance();
+        sampleData().forEach(productDao::save);
         executorService = Executors.newFixedThreadPool(3);
-        productDao = new ArrayListProductDao();
+    }
+
+    @After
+    public void tearDown() {
+        productDao.clear();
     }
 
     @Test
@@ -32,7 +39,7 @@ public class ArrayListProductDaoConcurrentTest {
             executorService.execute(() -> productDao.save(product));
         }
         executorService.awaitTermination(100, TimeUnit.MILLISECONDS);
-        int actualProductCount = productDao.findProducts().size();
+        int actualProductCount = productDao.getAllProducts().size();
 
         assertEquals(expectedProductCount, actualProductCount);
     }
@@ -45,7 +52,7 @@ public class ArrayListProductDaoConcurrentTest {
             executorService.execute(() -> productDao.save(product));
         }
         executorService.awaitTermination(100, TimeUnit.MILLISECONDS);
-        int actualProductCount = productDao.findProducts().size();
+        int actualProductCount = productDao.getAllProducts().size();
 
         assertEquals(initialProductCount, actualProductCount);
     }
