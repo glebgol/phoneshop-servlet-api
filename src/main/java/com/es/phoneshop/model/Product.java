@@ -1,7 +1,10 @@
 package com.es.phoneshop.model;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Currency;
+import java.util.List;
+import java.util.Objects;
 
 public class Product {
     private Long id;
@@ -13,18 +16,14 @@ public class Product {
     private Currency currency;
     private int stock;
     private String imageUrl;
+    private List<ProductPriceDate> priceHistory;
 
     public Product() {
     }
 
     public Product(Long id, String code, String description, BigDecimal price, Currency currency, int stock, String imageUrl) {
+        this(code, description, price, currency, stock, imageUrl);
         this.id = id;
-        this.code = code;
-        this.description = description;
-        this.price = price;
-        this.currency = currency;
-        this.stock = stock;
-        this.imageUrl = imageUrl;
     }
 
     public Product(String code, String description, BigDecimal price, Currency currency, int stock, String imageUrl) {
@@ -34,6 +33,7 @@ public class Product {
         this.currency = currency;
         this.stock = stock;
         this.imageUrl = imageUrl;
+        priceHistory = new ArrayList<>(List.of(new ProductPriceDate(price, currency)));
     }
 
     public Long getId() {
@@ -90,5 +90,38 @@ public class Product {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!obj.getClass().equals(Product.class)) {
+            return false;
+        }
+        Product product = (Product) obj;
+        return getId().equals(product.getId()) && getDescription().equals(product.getDescription());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, description);
+    }
+
+    @Override
+    public String toString() {
+        return "(Product: " + getDescription() + ", id: " + getId() + ", price: " + getPrice() + ")";
+    }
+
+    public List<ProductPriceDate> getPriceHistory() {
+        return priceHistory;
+    }
+
+    public void setPriceHistory(List<ProductPriceDate> priceHistory) {
+        this.priceHistory = priceHistory;
     }
 }
