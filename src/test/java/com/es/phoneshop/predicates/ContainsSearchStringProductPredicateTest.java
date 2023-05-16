@@ -1,6 +1,6 @@
 package com.es.phoneshop.predicates;
 
-import com.es.phoneshop.model.Product;
+import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.values.Products;
 import org.junit.Test;
 

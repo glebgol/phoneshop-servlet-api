@@ -1,6 +1,7 @@
 package com.es.phoneshop.web;
 
 import jakarta.servlet.ServletConfig;
+import jakarta.servlet.http.HttpSession;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,11 +30,18 @@ public class ProductListPageServletTest {
     private RequestDispatcher requestDispatcher;
     @Mock
     private ServletConfig config;
+    @Mock
+    private HttpSession session;
     private final ProductListPageServlet servlet = new ProductListPageServlet();
+    private static final String QUERY_PARAMETER_NAME = "query";
+    private static final String ORDER_PARAMETER_NAME = "order";
+    private static final String SORT_PARAMETER_NAME = "sort";
+    private static final String PRODUCTS_ATTRIBUTE_NAME = "products";
 
     @Before
     public void setup() throws ServletException {
         servlet.init(config);
+        when(request.getSession()).thenReturn(session);
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
     }
 
@@ -41,10 +49,10 @@ public class ProductListPageServletTest {
     public void testDoGet() throws ServletException, IOException {
         servlet.doGet(request, response);
 
-        verify(request).getParameter("query");
-        verify(request).getParameter("sort");
-        verify(request).getParameter("order");
-        verify(request).setAttribute(eq("products"), anyList());
+        verify(request).getParameter(QUERY_PARAMETER_NAME);
+        verify(request).getParameter(SORT_PARAMETER_NAME);
+        verify(request).getParameter(ORDER_PARAMETER_NAME);
+        verify(request).setAttribute(eq(PRODUCTS_ATTRIBUTE_NAME), anyList());
         verify(requestDispatcher).forward(request, response);
     }
 }

@@ -1,6 +1,6 @@
 package com.es.phoneshop.dao.impl;
 
-import com.es.phoneshop.model.Product;
+import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.values.Products;
 import org.junit.After;
 import org.junit.Before;

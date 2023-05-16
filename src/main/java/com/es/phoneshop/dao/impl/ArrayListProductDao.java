@@ -4,8 +4,8 @@ import com.es.phoneshop.comparators.ProductSearchingComparator;
 import com.es.phoneshop.comparators.ProductSortingComparator;
 import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.exceptions.ProductNotFoundException;
-import com.es.phoneshop.model.Product;
-import com.es.phoneshop.model.ProductSortingField;
+import com.es.phoneshop.model.product.Product;
+import com.es.phoneshop.model.product.ProductSortingField;
 import com.es.phoneshop.model.SortingOrder;
 import com.es.phoneshop.predicates.ContainsSearchStringProductPredicate;
 import com.es.phoneshop.utils.ExtendedReadWriteLock;
@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ArrayListProductDao implements ProductDao {
     private static final Logger log = Logger.getLogger(ArrayListProductDao.class.getName());
@@ -46,18 +47,14 @@ public class ArrayListProductDao implements ProductDao {
 
     @Override
     public List<Product> getAllProducts() {
-        return readWriteLock.read(() -> products.stream()
-                .filter(this::productIsInStock)
-                .filter(this::productPriceIsNotNull)
+        return readWriteLock.read(() -> findProducts(products)
                 .collect(Collectors.toList())
         );
     }
 
     @Override
     public List<Product> findProducts(String search) {
-        return readWriteLock.read(() -> products.stream()
-                .filter(this::productIsInStock)
-                .filter(this::productPriceIsNotNull)
+        return readWriteLock.read(() -> findProducts(products)
                 .filter(new ContainsSearchStringProductPredicate(search))
                 .sorted(new ProductSearchingComparator(search))
                 .collect(Collectors.toList())
@@ -66,9 +63,7 @@ public class ArrayListProductDao implements ProductDao {
 
     @Override
     public List<Product> findProducts(String search, @NonNull ProductSortingField productSortingField, @NonNull SortingOrder sortingOrder) {
-        return readWriteLock.read(() -> products.stream()
-                .filter(this::productIsInStock)
-                .filter(this::productPriceIsNotNull)
+        return readWriteLock.read(() -> findProducts(products)
                 .filter(new ContainsSearchStringProductPredicate(search))
                 .sorted(new ProductSortingComparator(productSortingField, sortingOrder)
                         .thenComparing(new ProductSearchingComparator(search)))
@@ -82,6 +77,12 @@ public class ArrayListProductDao implements ProductDao {
 
     private boolean productPriceIsNotNull(Product product) {
         return product.getPrice() != null;
+    }
+
+    private Stream<Product> findProducts(List<Product> products) {
+        return products.stream()
+                .filter(this::productIsInStock)
+                .filter(this::productPriceIsNotNull);
     }
 
     @Override
