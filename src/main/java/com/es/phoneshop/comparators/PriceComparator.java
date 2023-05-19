@@ -1,6 +1,6 @@
 package com.es.phoneshop.comparators;
 
-import com.es.phoneshop.model.Product;
+import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.SortingOrder;
 
 public class PriceComparator extends ProductFieldComparator {

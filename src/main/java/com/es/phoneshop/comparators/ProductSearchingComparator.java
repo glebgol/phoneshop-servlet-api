@@ -1,6 +1,6 @@
 package com.es.phoneshop.comparators;
 
-import com.es.phoneshop.model.Product;
+import com.es.phoneshop.model.product.Product;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.util.Arrays;
@@ -41,7 +41,7 @@ public class ProductSearchingComparator implements Comparator<Product> {
         return str.toLowerCase().contains(word.toLowerCase());
     }
 
-    int compareWordsCount(Product p1, Product p2) {
+    private int compareWordsCount(Product p1, Product p2) {
         return Integer.compare(p1.getDescription().split(regex).length, p2.getDescription().split(regex).length);
     }
 }

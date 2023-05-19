@@ -4,6 +4,7 @@
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
 <jsp:useBean id="products" type="java.util.ArrayList" scope="request"/>
+<jsp:useBean id="recentlyViewedProducts" scope="request" type="java.util.List<com.es.phoneshop.model.product.Product>"/>
 <tags:master pageTitle="Product List">
   <p>
     Welcome to Expert-Soft training!
@@ -46,4 +47,5 @@
       </tr>
     </c:forEach>
   </table>
+  <tags:recentlyViewedProducts recentlyViewedProducts="${recentlyViewedProducts}"/>
 </tags:master>

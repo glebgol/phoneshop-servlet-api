@@ -1,4 +1,4 @@
-package com.es.phoneshop.model;
+package com.es.phoneshop.model.product;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -92,13 +92,21 @@ public class Product {
         this.imageUrl = imageUrl;
     }
 
+    public List<ProductPriceDate> getPriceHistory() {
+        return priceHistory;
+    }
+
+    public void setPriceHistory(List<ProductPriceDate> priceHistory) {
+        this.priceHistory = priceHistory;
+    }
+
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
         if (obj == null) {
             return false;
+        }
+        if (this == obj) {
+            return true;
         }
         if (!obj.getClass().equals(Product.class)) {
             return false;
@@ -114,14 +122,13 @@ public class Product {
 
     @Override
     public String toString() {
-        return "(Product: " + getDescription() + ", id: " + getId() + ", price: " + getPrice() + ")";
-    }
-
-    public List<ProductPriceDate> getPriceHistory() {
-        return priceHistory;
-    }
-
-    public void setPriceHistory(List<ProductPriceDate> priceHistory) {
-        this.priceHistory = priceHistory;
+        return "Product{" +
+                "id=" + id +
+                ", code='" + code + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", currency=" + currency +
+                ", stock=" + stock +
+                '}';
     }
 }

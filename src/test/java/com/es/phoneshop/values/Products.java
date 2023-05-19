@@ -1,6 +1,6 @@
 package com.es.phoneshop.values;
 
-import com.es.phoneshop.model.Product;
+import com.es.phoneshop.model.product.Product;
 
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -82,6 +82,30 @@ public class Products {
                 new BigDecimal(price),
                 USD,
                 10,
+                "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Apple/Apple%20iPhone.jpg"
+        );
+    }
+
+    public static Product withId(Long id) {
+        return new Product(
+                id,
+                "iphone",
+                "Apple iPhone",
+                new BigDecimal(1000),
+                USD,
+                10,
+                "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Apple/Apple%20iPhone.jpg"
+        );
+    }
+
+    public static Product withIdAndStock(Long id, int stock) {
+        return new Product(
+                id,
+                "iphone",
+                "Apple iPhone",
+                new BigDecimal(1000),
+                USD,
+                stock,
                 "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Apple/Apple%20iPhone.jpg"
         );
     }

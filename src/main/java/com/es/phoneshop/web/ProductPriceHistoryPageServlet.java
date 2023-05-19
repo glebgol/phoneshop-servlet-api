@@ -15,6 +15,8 @@ import java.io.IOException;
 
 public class ProductPriceHistoryPageServlet extends HttpServlet {
     protected ProductPriceHistoryService priceHistoryService;
+    private final static String PRODUCT_PRICE_HISTORY_ATTRIBUTE_NAME = "productPriceHistory";
+    private static final String PRODUCT_PRICE_HISTORY_JSP = "/WEB-INF/pages/productPriceHistory.jsp";
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -26,7 +28,7 @@ public class ProductPriceHistoryPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         final long productId = RequestParser.getIdFromPath(request);
-        request.setAttribute("productPriceHistory", priceHistoryService.getPriceHistory(productId));
-        request.getRequestDispatcher("/WEB-INF/pages/productPriceHistory.jsp").forward(request, response);
+        request.setAttribute(PRODUCT_PRICE_HISTORY_ATTRIBUTE_NAME, priceHistoryService.getPriceHistory(productId));
+        request.getRequestDispatcher(PRODUCT_PRICE_HISTORY_JSP).forward(request, response);
     }
 }

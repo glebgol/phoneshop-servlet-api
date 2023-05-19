@@ -1,6 +1,6 @@
 package com.es.phoneshop.comparators;
 
-import com.es.phoneshop.model.ProductSortingField;
+import com.es.phoneshop.model.product.ProductSortingField;
 import com.es.phoneshop.model.SortingOrder;
 import org.junit.Test;
 
