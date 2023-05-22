@@ -7,15 +7,13 @@ import com.es.phoneshop.services.impl.ArrayListProductPriceHistoryService;
 import com.es.phoneshop.web.utils.RequestParser;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-public class ProductPriceHistoryPageServlet extends HttpServlet {
+public class ProductPriceHistoryPageServlet extends AbstractServlet {
     protected ProductPriceHistoryService priceHistoryService;
-    private final static String PRODUCT_PRICE_HISTORY_ATTRIBUTE_NAME = "productPriceHistory";
     private static final String PRODUCT_PRICE_HISTORY_JSP = "/WEB-INF/pages/productPriceHistory.jsp";
 
     @Override

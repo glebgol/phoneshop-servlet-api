@@ -4,7 +4,7 @@ import com.es.phoneshop.dao.impl.ArrayListProductDao;
 import com.es.phoneshop.exceptions.OutOfStockException;
 import com.es.phoneshop.exceptions.ProductNotFoundException;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.parser.impl.DefaultNumberParser;
+import com.es.phoneshop.services.impl.DefaultNumberParser;
 import com.es.phoneshop.services.impl.DefaultRecentlyViewedProductService;
 import com.es.phoneshop.services.impl.HttpSessionCartService;
 import jakarta.servlet.RequestDispatcher;
@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -82,6 +83,7 @@ public class ProductDetailsPageServletTest {
         when(request.getPathInfo()).thenReturn(EXISTING_PRODUCT_PATH_INFO);
         when(servlet.productDao.getProduct(EXISTING_PRODUCT_ID)).thenReturn(EXISTING_PRODUCT);
         when(servlet.recentlyViewedProductService.getRecentlyViewedProducts(request)).thenReturn(RECENTLY_VIEWED_PRODUCTS);
+
         servlet.doGet(request, response);
 
         verify(request).getPathInfo();
@@ -102,10 +104,9 @@ public class ProductDetailsPageServletTest {
     }
 
     @Test
-    public void testDoPostSendRedirect() throws ServletException, IOException {
+    public void testDoPostSendRedirect() throws ServletException, IOException, ParseException {
         when(request.getParameter(QUANTITY_ATTRIBUTE_NAME)).thenReturn(QUANTITY_STRING);
         when(request.getPathInfo()).thenReturn(EXISTING_PRODUCT_PATH_INFO);
-        when(servlet.numberParser.isValidQuantity(LOCALE, QUANTITY_STRING)).thenReturn(true);
         when(servlet.numberParser.parseNumber(LOCALE, QUANTITY_STRING)).thenReturn(QUANTITY);
 
         servlet.doPost(request, response);
@@ -114,11 +115,11 @@ public class ProductDetailsPageServletTest {
     }
 
     @Test
-    public void testDoPostNotValidQuantity() throws ServletException, IOException {
+    public void testDoPostNotValidQuantity() throws ServletException, IOException, ParseException {
         when(request.getParameter(QUANTITY_ATTRIBUTE_NAME)).thenReturn(NOT_VALID_QUANTITY_STRING);
         servlet.numberParser = mock(DefaultNumberParser.class);
         when(request.getPathInfo()).thenReturn(EXISTING_PRODUCT_PATH_INFO);
-        when(servlet.numberParser.isValidQuantity(LOCALE, NOT_VALID_QUANTITY_STRING)).thenReturn(false);
+        when(servlet.numberParser.parseNumber(LOCALE, NOT_VALID_QUANTITY_STRING)).thenThrow(NumberFormatException.class);
 
         servlet.doPost(request, response);
 
@@ -126,10 +127,9 @@ public class ProductDetailsPageServletTest {
     }
 
     @Test
-    public void testDoPostOutOfStock() throws ServletException, IOException, OutOfStockException {
+    public void testDoPostOutOfStock() throws ServletException, IOException, OutOfStockException, ParseException {
         when(request.getParameter(QUANTITY_ATTRIBUTE_NAME)).thenReturn(OUT_OF_STOCK_QUANTITY_STRING);
         when(request.getPathInfo()).thenReturn(EXISTING_PRODUCT_PATH_INFO);
-        when(servlet.numberParser.isValidQuantity(LOCALE, OUT_OF_STOCK_QUANTITY_STRING)).thenReturn(true);
         when(servlet.numberParser.parseNumber(LOCALE, OUT_OF_STOCK_QUANTITY_STRING)).thenReturn(OUT_OF_STOCK_QUANTITY);
         doThrow(OutOfStockException.class).when(servlet.cartService).add(any(), any(), eq(OUT_OF_STOCK_QUANTITY));
 
