@@ -15,18 +15,23 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.anyInt;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HttpSessionCartServiceTest {
     @Mock
     private Cart cart;
     private final HttpSessionCartService httpSessionCartService = HttpSessionCartService.getInstance();
-    private final Long PRODUCT_ID = 1L;
-    private final int PRODUCT_STOCK = 10;
-    private final Product PRODUCT = Products.withIdAndStock(PRODUCT_ID, PRODUCT_STOCK);
-    private final List<CartItem> EMPTY_CART_ITEMS = new ArrayList<>();
-    private final List<CartItem> CART_ITEMS = List.of(new CartItem(PRODUCT, 1));
+    private static final Long PRODUCT_ID = 1L;
+    private static final int PRODUCT_STOCK = 10;
+    private static final int OUT_OF_STOCK_QUANTITY = 1000;
+    private static final Product PRODUCT = Products.withIdAndStock(PRODUCT_ID, PRODUCT_STOCK);
+    private static final List<CartItem> EMPTY_CART_ITEMS = new ArrayList<>();
+    private static final List<CartItem> CART_ITEMS = List.of(new CartItem(PRODUCT, 1));
 
     @Before
     public void setUp() {
@@ -57,6 +62,21 @@ public class HttpSessionCartServiceTest {
 
         httpSessionCartService.add(cart, PRODUCT_ID, quantity);
 
-        verify(cart, times(2)).getItems();
+        verify(cart, times(4)).getItems();
+    }
+
+    @Test(expected = OutOfStockException.class)
+    public void updateCart() throws OutOfStockException {
+        when(cart.getItems()).thenReturn(CART_ITEMS);
+
+        httpSessionCartService.update(cart, PRODUCT_ID, OUT_OF_STOCK_QUANTITY);
+    }
+
+    @Test
+    public void deleteCartItem() {
+        httpSessionCartService.delete(cart, PRODUCT_ID);
+
+        verify(cart, times(3)).getItems();
+        verify(cart).setTotalQuantity(anyInt());
     }
 }

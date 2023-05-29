@@ -7,15 +7,16 @@ import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartItem;
 import com.es.phoneshop.services.CartService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.util.WebUtils;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 public class HttpSessionCartService implements CartService {
     private static final String CART_SESSION_ATTRIBUTE = HttpSessionCartService.class.getName();
     protected ProductDao productDao;
+    private final Object lock = new Object();
 
     private HttpSessionCartService() {
         productDao = ArrayListProductDao.getInstance();
@@ -30,8 +31,7 @@ public class HttpSessionCartService implements CartService {
     }
 
     @Override
-    public Cart getCart(HttpServletRequest request) {
-        HttpSession session = request.getSession();
+    public Cart getCart(HttpSession session) {
         if (session != null) {
             synchronized (WebUtils.getSessionMutex(session)) {
                 Cart cart = (Cart) session.getAttribute(CART_SESSION_ATTRIBUTE);
@@ -46,16 +46,50 @@ public class HttpSessionCartService implements CartService {
 
     @Override
     public void add(Cart cart, Long productId, int quantity) throws OutOfStockException {
-        Product product = productDao.getProduct(productId);
-        Optional<CartItem> cartItemOptional = findCartItemByProduct(cart, product);
-        if (cartItemOptional.isPresent()) {
-            CartItem cartItem = cartItemOptional.get();
-            int availableStock = getAvailableStock(cartItem, product);
-            updateCartItemQuantity(cartItem, product, quantity, availableStock);
+        synchronized (lock) {
+            Product product = productDao.getProduct(productId);
+            Optional<CartItem> cartItemOptional = findCartItemByProduct(cart, product);
+            if (cartItemOptional.isPresent()) {
+                CartItem cartItem = cartItemOptional.get();
+                int availableStock = getAvailableStock(cartItem, product);
+                addCartItemProductQuantity(cartItem, product, quantity, availableStock);
+            } else {
+                createNewCartItem(cart, product, quantity);
+            }
+            recalculateCart(cart);
         }
-        else {
-            createNewCartItem(cart, product, quantity);
+    }
+
+    @Override
+    public void update(Cart cart, Long productId, int quantity) throws OutOfStockException {
+        synchronized (lock) {
+            Product product = productDao.getProduct(productId);
+            Optional<CartItem> cartItemOptional = findCartItemByProduct(cart, product);
+            if (cartItemOptional.isPresent()) {
+                CartItem cartItem = cartItemOptional.get();
+                updateCartItemProductQuantity(cartItem, product, quantity);
+            }
+            recalculateCart(cart);
         }
+    }
+
+    @Override
+    public void delete(Cart cart, Long productId) {
+        synchronized (lock) {
+            cart.getItems().removeIf(item -> item.getProduct().getId().equals(productId));
+            recalculateCart(cart);
+        }
+    }
+
+    private void recalculateCart(Cart cart) {
+        cart.setTotalQuantity(cart.getItems().stream()
+                .mapToInt(CartItem::getQuantity)
+                .sum());
+
+        cart.setTotalCost(cart.getItems().stream()
+                .map(item -> item.getProduct().getPrice()
+                        .multiply(new BigDecimal(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
     }
 
     private boolean isNotAvailableToAdd(int quantity, int availableStock) {
@@ -67,18 +101,27 @@ public class HttpSessionCartService implements CartService {
     }
 
     private void createNewCartItem(Cart cart, Product product, int quantity) throws OutOfStockException {
-        int productStock = product.getStock();
-        if (isNotAvailableToAdd(quantity, productStock)) {
-            throw new OutOfStockException(product, productStock, quantity);
-        }
+        checkAddingPossibility(product, product.getStock(), quantity);
         cart.getItems().add(new CartItem(product, quantity));
     }
 
-    private void updateCartItemQuantity(CartItem cartItem, Product product, int quantity, int availableStock) throws OutOfStockException {
+    private void addCartItemProductQuantity(CartItem cartItem, Product product, int quantity, int availableStock) throws OutOfStockException {
+        checkAddingPossibility(product, availableStock, quantity);
+        cartItem.setQuantity(cartItem.getQuantity() + quantity);
+    }
+
+    private void checkAddingPossibility(Product product, int availableStock, int quantity) throws OutOfStockException {
         if (isNotAvailableToAdd(quantity, availableStock)) {
             throw new OutOfStockException(product, availableStock, quantity);
         }
-        cartItem.setQuantity(cartItem.getQuantity() + quantity);
+    }
+
+    private void updateCartItemProductQuantity(CartItem cartItem, Product product, int quantity) throws OutOfStockException {
+        int availableStock = product.getStock();
+        if (isNotAvailableToAdd(quantity, availableStock)) {
+            throw new OutOfStockException(product, availableStock, quantity);
+        }
+        cartItem.setQuantity(quantity);
     }
 
     private Optional<CartItem> findCartItemByProduct(Cart cart, Product product) {
