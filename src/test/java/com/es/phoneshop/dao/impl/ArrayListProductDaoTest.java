@@ -87,7 +87,7 @@ public class ArrayListProductDaoTest {
     @Test(expected = ProductNotFoundException.class)
     public void getProductNonExistentIdThrowsException() {
         long id = -100L;
-        productDao.getProduct(id);
+        productDao.get(id);
     }
 
     @Test

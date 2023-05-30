@@ -27,7 +27,7 @@ public class ArrayListProductPriceHistoryServiceTest {
     @Test
     public void getProductPriceHistory() {
         Product product = Products.iphone();
-        when(productDao.getProduct(anyLong())).thenReturn(product);
+        when(productDao.get(anyLong())).thenReturn(product);
         String expectedDescription = product.getDescription();
         List<ProductPriceDate> expectedHistory = product.getPriceHistory();
 

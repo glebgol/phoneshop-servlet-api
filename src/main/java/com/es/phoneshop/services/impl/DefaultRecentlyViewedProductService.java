@@ -60,7 +60,7 @@ public class DefaultRecentlyViewedProductService implements RecentlyViewedProduc
                     recentlyViewedProducts = new RecentlyViewedProducts();
                 }
                 LinkedList<Product> products = recentlyViewedProducts.getProducts();
-                Product product = productDao.getProduct(productId);
+                Product product = productDao.get(productId);
                 products.remove(product);
                 products.addFirst(product);
                 if (products.size() > RECENTLY_VIEWED_PRODUCT_COUNT) {

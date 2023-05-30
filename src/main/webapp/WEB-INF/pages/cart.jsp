@@ -54,14 +54,14 @@
                         <input type="hidden" name="productId" value="${item.product.id}"/>
                         <c:if test="${not empty error}">
                             <div class="error">
-                                    ${errors[item.product.id]}
+                                    ${error}
                             </div>
                         </c:if>
                     </td>
                     <td class="price">
                         <c:set var="currency" value="${item.product.currency.symbol}" />
                         <a href="${pageContext.servletContext.contextPath}/products/price-history/${item.product.id}">
-                            <fmt:formatNumber value="${item.product.price}" type="currency" currencySymbol="${currencyl}"/>
+                            <fmt:formatNumber value="${item.product.price}" type="currency" currencySymbol="${currency}"/>
                         </a>
                     </td>
                     <td>
@@ -71,17 +71,18 @@
                 </tr>
             </c:forEach>
             <tr>
-                <td>Total cost:</td>
-                <td>
-                    <fmt:formatNumber value="${cart.totalCost}" type="currency" currencySymbol="${currency}"/>
-                </td>
-                <td>Total Quantity:</td>
-                <td>${cart.totalQuantity}</td>
+                <td></td>
+                <td></td>
+                <td>Total Quantity: ${cart.totalQuantity}</td>
+                <td>Total cost:<fmt:formatNumber value="${cart.totalCost}" type="currency" currencySymbol="${currency}"/></td>
             </tr>
         </table>
         <p>
             <button>Update</button>
         </p>
+    </form>
+    <form action="${pageContext.servletContext.contextPath}/checkout" method="get">
+        <button>Checkout</button>
     </form>
     <form id='deleteCartItem' method="post">
     </form>
