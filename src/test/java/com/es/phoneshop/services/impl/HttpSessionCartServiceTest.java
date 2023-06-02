@@ -36,7 +36,7 @@ public class HttpSessionCartServiceTest {
     @Before
     public void setUp() {
         httpSessionCartService.productDao = mock(ArrayListProductDao.class);
-        when(httpSessionCartService.productDao.getProduct(PRODUCT_ID)).thenReturn(PRODUCT);
+        when(httpSessionCartService.productDao.get(PRODUCT_ID)).thenReturn(PRODUCT);
     }
 
     @Test(expected = OutOfStockException.class)

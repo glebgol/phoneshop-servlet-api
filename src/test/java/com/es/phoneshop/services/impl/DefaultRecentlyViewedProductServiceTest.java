@@ -46,10 +46,10 @@ public class DefaultRecentlyViewedProductServiceTest {
 
         recentlyViewedProductService.productDao = mock(ArrayListProductDao.class);
         ProductDao productDaoMock = recentlyViewedProductService.productDao;
-        when(productDaoMock.getProduct(PRODUCT_1_ID)).thenReturn(PRODUCT_1);
-        when(productDaoMock.getProduct(PRODUCT_2_ID)).thenReturn(PRODUCT_2);
-        when(productDaoMock.getProduct(PRODUCT_3_ID)).thenReturn(PRODUCT_3);
-        when(productDaoMock.getProduct(PRODUCT_4_ID)).thenReturn(PRODUCT_4);
+        when(productDaoMock.get(PRODUCT_1_ID)).thenReturn(PRODUCT_1);
+        when(productDaoMock.get(PRODUCT_2_ID)).thenReturn(PRODUCT_2);
+        when(productDaoMock.get(PRODUCT_3_ID)).thenReturn(PRODUCT_3);
+        when(productDaoMock.get(PRODUCT_4_ID)).thenReturn(PRODUCT_4);
     }
 
     @Test

@@ -12,4 +12,8 @@ public class RequestParser {
     public static Long getProductIdParameter(HttpServletRequest request) {
         return Long.parseLong(request.getParameter(PRODUCT_ID_ATTRIBUTE_NAME));
     }
+
+    public static String getSecureIdFromPath(HttpServletRequest request) {
+        return request.getPathInfo().substring(1);
+    }
 }

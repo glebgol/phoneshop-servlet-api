@@ -1,5 +1,7 @@
 package com.es.phoneshop.model.product;
 
+import com.es.phoneshop.model.IdentifiableItem;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -7,8 +9,7 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Objects;
 
-public class Product implements Serializable {
-    private Long id;
+public class Product extends IdentifiableItem implements Serializable {
     private String code;
     private String description;
     /** null means there is no price because the product is outdated or new */
@@ -35,14 +36,6 @@ public class Product implements Serializable {
         this.stock = stock;
         this.imageUrl = imageUrl;
         priceHistory = new ArrayList<>(List.of(new ProductPriceDate(price, currency)));
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getCode() {

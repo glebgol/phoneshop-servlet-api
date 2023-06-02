@@ -81,7 +81,7 @@ public class ProductDetailsPageServletTest {
     @Test
     public void testDoGetExistentProductDetails() throws ServletException, IOException {
         when(request.getPathInfo()).thenReturn(EXISTING_PRODUCT_PATH_INFO);
-        when(servlet.productDao.getProduct(EXISTING_PRODUCT_ID)).thenReturn(EXISTING_PRODUCT);
+        when(servlet.productDao.get(EXISTING_PRODUCT_ID)).thenReturn(EXISTING_PRODUCT);
         when(servlet.recentlyViewedProductService.getRecentlyViewedProducts(request)).thenReturn(RECENTLY_VIEWED_PRODUCTS);
 
         servlet.doGet(request, response);
@@ -96,7 +96,7 @@ public class ProductDetailsPageServletTest {
     @Test(expected = ProductNotFoundException.class)
     public void testDoGetNonExistentProductDetails() throws ServletException, IOException {
         when(request.getPathInfo()).thenReturn(NON_EXISTING_PRODUCT_PATH_INFO);
-        when(servlet.productDao.getProduct(NON_EXISTING_PRODUCT_ID)).thenThrow(ProductNotFoundException.class);
+        when(servlet.productDao.get(NON_EXISTING_PRODUCT_ID)).thenThrow(ProductNotFoundException.class);
 
         servlet.doGet(request, response);
 

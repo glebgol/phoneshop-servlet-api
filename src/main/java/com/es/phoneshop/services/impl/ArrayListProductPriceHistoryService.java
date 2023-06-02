@@ -14,7 +14,7 @@ public class ArrayListProductPriceHistoryService implements ProductPriceHistoryS
 
     @Override
     public ProductPriceHistory getPriceHistory(long id) {
-        Product product = productDao.getProduct(id);
+        Product product = productDao.get(id);
         return new ProductPriceHistory(product.getPriceHistory(), product.getDescription());
     }
 }

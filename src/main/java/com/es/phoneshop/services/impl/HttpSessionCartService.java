@@ -47,7 +47,7 @@ public class HttpSessionCartService implements CartService {
     @Override
     public void add(Cart cart, Long productId, int quantity) throws OutOfStockException {
         synchronized (lock) {
-            Product product = productDao.getProduct(productId);
+            Product product = productDao.get(productId);
             Optional<CartItem> cartItemOptional = findCartItemByProduct(cart, product);
             if (cartItemOptional.isPresent()) {
                 CartItem cartItem = cartItemOptional.get();
@@ -63,7 +63,7 @@ public class HttpSessionCartService implements CartService {
     @Override
     public void update(Cart cart, Long productId, int quantity) throws OutOfStockException {
         synchronized (lock) {
-            Product product = productDao.getProduct(productId);
+            Product product = productDao.get(productId);
             Optional<CartItem> cartItemOptional = findCartItemByProduct(cart, product);
             if (cartItemOptional.isPresent()) {
                 CartItem cartItem = cartItemOptional.get();
@@ -77,6 +77,14 @@ public class HttpSessionCartService implements CartService {
     public void delete(Cart cart, Long productId) {
         synchronized (lock) {
             cart.getItems().removeIf(item -> item.getProduct().getId().equals(productId));
+            recalculateCart(cart);
+        }
+    }
+
+    @Override
+    public void clear(Cart cart) {
+        synchronized (lock) {
+            cart.getItems().clear();
             recalculateCart(cart);
         }
     }

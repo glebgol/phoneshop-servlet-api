@@ -27,6 +27,21 @@ public class AbstractServlet extends HttpServlet {
     protected static final String ORDER_PARAMETER_NAME = "order";
     protected static final String PRODUCTS_ATTRIBUTE_NAME = "products";
     protected final static String PRODUCT_PRICE_HISTORY_ATTRIBUTE_NAME = "productPriceHistory";
+    protected final static String ORDER_ATTRIBUTE_NAME = "order";
+    protected static final String FIRST_NAME_ATTRIBUTE_NAME = "firstName";
+    protected static final String FIRST_NAME_ERROR_MESSAGE = "First name is not valid";
+    protected static final String LAST_NAME_ATTRIBUTE_NAME = "lastName";
+    protected static final String LAST_NAME_ERROR_MESSAGE = "Last name is not valid";
+    protected static final String PHONE_ATTRIBUTE_NAME = "phone";
+    protected static final String PHONE_ERROR_MESSAGE = "Is not valid phone number";
+    protected static final String DELIVERY_DATE_ATTRIBUTE_NAME = "deliveryDate";
+    protected static final String DELIVERY_DATE_ERROR_MESSAGE = "Is not valid date";
+    protected static final String DELIVERY_ADDRESS_ATTRIBUTE_NAME = "deliveryAddress";
+    protected static final String DELIVERY_ADDRESS_ERROR_MESSAGE = "Is not valid delivery address";
+    protected static final String PAYMENT_METHOD_ATTRIBUTE_NAME = "paymentMethod";
+    protected static final String PAYMENT_METHOD_ERROR_MESSAGE = "Payment method is required";
+    protected static final String PAYMENT_METHODS_ATTRIBUTE_NAME = "paymentMethods";
+    protected static final String EMPTY_CART_JSP = "/WEB-INF/pages/error/emptyCart.jsp";
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -37,8 +52,7 @@ public class AbstractServlet extends HttpServlet {
     protected static String getQuantityErrorMessage(Exception e) {
         if (e instanceof OutOfStockException) {
             return OUT_OF_STOCK_ERROR_MESSAGE + ((OutOfStockException) e).getAvailableStock();
-        }
-        else {
+        } else {
             return QUANTITY_ERROR_MESSAGE;
         }
     }

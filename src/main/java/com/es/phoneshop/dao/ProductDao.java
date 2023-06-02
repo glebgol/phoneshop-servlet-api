@@ -7,7 +7,7 @@ import com.es.phoneshop.model.SortingOrder;
 import java.util.List;
 
 public interface ProductDao {
-    Product getProduct(Long id);
+    Product get(Long id);
     List<Product> getAllProducts();
     List<Product> findProducts(String search, ProductSortingField productSortingField, SortingOrder sortingOrder);
     List<Product> findProducts(String search);
