@@ -9,6 +9,9 @@
   <p>
     Welcome to Expert-Soft training!
   </p>
+  <p>
+    <a href="${pageContext.servletContext.contextPath}/advancedSearch">Advanced search page</a>
+  </p>
   <c:if test="${not empty param.message and empty error}">
     <div class="success">
         ${param.message}
@@ -52,7 +55,6 @@
                 ${product.description}
             </a>
           </td>
-          <td>
           <td class="quantity">
             <c:set var="quantityString" value="${param.quantity}"/>
             <input name="quantity" value="${not empty error and quantityErrorId eq product.id ? quantityString : 1}" class="quantity"/>
@@ -62,6 +64,7 @@
                   ${error}
               </div>
             </c:if>
+          </td>
           <td class="price">
             <a href="${pageContext.servletContext.contextPath}/products/price-history/${product.id}">
               <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="${product.currency.symbol}"/>

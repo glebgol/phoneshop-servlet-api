@@ -7,9 +7,14 @@ import com.es.phoneshop.exceptions.ProductNotFoundException;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductSortingField;
 import com.es.phoneshop.model.SortingOrder;
+import com.es.phoneshop.predicates.AdvancedSearchProductPredicate;
 import com.es.phoneshop.predicates.ContainsSearchStringProductPredicate;
+import com.es.phoneshop.predicates.MaxPriceProductPredicate;
+import com.es.phoneshop.predicates.MinPriceProductPredicate;
+import com.es.phoneshop.strategies.SearchMethod;
 import lombok.NonNull;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -30,7 +35,6 @@ public class ArrayListProductDao extends ArrayListDao<Product> implements Produc
         return SingletonHelper.INSTANCE;
     }
 
-
     @Override
     public Product get(Long id) {
         return Optional.ofNullable(super.get(id))
@@ -42,6 +46,15 @@ public class ArrayListProductDao extends ArrayListDao<Product> implements Produc
         return readWriteLock.read(() -> findProducts(items)
                 .collect(Collectors.toList())
         );
+    }
+
+    @Override
+    public List<Product> advancedProductSearch(String search, SearchMethod searchMethod, BigDecimal minPrice, BigDecimal maxPrice) {
+        return readWriteLock.read(() -> findProducts(items)
+                .filter(new MinPriceProductPredicate(minPrice))
+                .filter(new MaxPriceProductPredicate(maxPrice))
+                .filter(new AdvancedSearchProductPredicate(search, searchMethod))
+                .collect(Collectors.toList()));
     }
 
     @Override
